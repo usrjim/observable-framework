@@ -45,9 +45,90 @@ toc: false
 </style>
 
 <div class="hero">
-  <h1>Hello, Observable Framework</h1>
-  <h2>Welcome to your new project! Edit&nbsp;<code style="font-size: 90%;">docs/index.md</code> to change this page.</h2>
-  <a href="https://observablehq.com/framework/getting-started" target="_blank">Get started<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a>
+  <h1>Documentation</h1>
+  <h2>Hey</h2>
+</div>
+
+<div class="grid grid-cols-2">
+  <div class="card grid-colspan-2">
+  Showing downloads for **${packageName}**
+
+  ```js
+  const packages_sql = "select package from stats group by package order by max(downloads) desc"
+
+  const packages = fetch(
+    `https://datasette.io/content.json?sql=${encodeURIComponent(
+      packages_sql
+    )}&_size=max&_shape=arrayfirst`
+  ).then((r) => r.json());
+  ```
+
+  ```js
+  const packageName = view(Inputs.select(packages, {
+    value: "sqlite-utils",
+    label: "Package"
+  }));
+  ```
+
+  ```js
+  const data = d3.json(
+    `https://datasette.io/content/stats.json?_size=max&package=${packageName}&_sort_desc=date&_shape=array`
+  );
+  ```
+
+  ```js
+  const data_with_dates = data.map(function(d) {
+    d.date = d3.timeParse("%Y-%m-%d")(d.date);
+    return d;
+  })
+  ```
+
+  ```js
+  Plot.plot({
+    y: {
+      grid: true,
+      label: `${packageName} PyPI downloads per day`
+    },
+    width: width,
+    marginLeft: 60,
+    marks: [
+      Plot.line(data_with_dates, {
+        x: "date",
+        y: "downloads",
+        title: "downloads",
+        tip: true
+      })
+    ]
+  })
+  ```
+  </div>
+  <div class="card">
+  
+  ```js
+  FileAttachment("data/quakes.json").json()
+  ```
+
+  </div>
+  <div class="card">
+
+  ```js
+  const quakes = FileAttachment("data/quakes.csv").csv({typed: true});
+  ```
+
+  ```js
+  Plot.plot({
+    projection: {
+      type: "orthographic",
+      rotate: [110, -30]
+    },
+    marks: [
+      Plot.graticule(),
+      Plot.sphere(),
+      Plot.dot(quakes, {x: "longitude", y: "latitude", r: "magnitude", stroke: "#f43f5e"})
+    ]
+  })
+  ```
+  </div>
 </div>
 
 <div class="grid grid-cols-2" style="grid-auto-rows: 504px;">
